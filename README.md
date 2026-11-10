@@ -6,21 +6,25 @@ Production self-hosted homelab featuring Zero-Trust mesh network, self-hosted se
 
 ```mermaid
 graph TD
-    Client[Remote Workstation / Mobile] -->|Tailscale Encrypted Mesh| TS[Tailscale Interface]
-    
-    subgraph "Host OS - Production Stack (Docker)"
-        TS --> Proxy[Reverse Proxy - Nginx Proxy Manager]
-        
-        Proxy --> Vault[Vaultwarden - Passwords]
-        Proxy --> Immich[Immich - Photo Management]
-        Proxy --> Jelly[Jellyfin - Media Server]
-        Proxy --> PyApp[Custom Python App - Calendar/Todo]
-        
-        DNS[Pi-hole - Network DNS & Adblocking] --> TS
-        CrowdSec[CrowdSec IPS] -->|Parses Access Logs| Proxy
-        Proxy -->|Security Hardening| UFW[UFW Firewall / Fail2ban]
+    subgraph "Your Laptop (Attacker / Admin)"
+        Laptop[Personal Laptop / Kali / Tools]
     end
 
-    subgraph "Host OS - Isolated Sandbox (KVM / QEMU)"
-        Attacker[Pentest Workstation] -->|Isolated Internal Virtual Bridge| VulnVM[Vulnerable VMs / VulnHub / Metasploitable]
+    subgraph "MarmutServer (Host OS)"
+        subgraph "Production Stack (Docker)"
+            TS[Tailscale Interface] --> Proxy[Nginx Proxy Manager]
+            Proxy --> Services[Vaultwarden / Immich / Jellyfin / Python App]
+            DNS[Pi-hole DNS]
+            CrowdSec[CrowdSec IPS] --> Proxy
+        end
+
+        subgraph "Isolated Sandbox (KVM / QEMU)"
+            Bridge[Isolated Lab Switch / Bridge]
+            Bridge --> VulnVM1[Metasploitable]
+            Bridge --> VulnVM2[VulnHub Target]
+        end
     end
+
+    %% Access flows
+    Laptop -->|Zero-Trust Admin Access| TS
+    Laptop -->|Encrypted Lab Tunnel / Dedicated Access| Bridge
