@@ -1,6 +1,6 @@
 # marmut-homelab
 
-Production self-hosted homelab featuring Zero-Trust mesh network, self-hosted security &amp; media stack, custom Python web apps, and an isolated KVM lab for penetration testing.
+Production self-hosted homelab featuring Zero-Trust mesh network, self-hosted security & media stack, custom Python web apps, and an isolated KVM lab for penetration testing.
 
 ## Network Architecture & Topology
 
@@ -8,7 +8,7 @@ Production self-hosted homelab featuring Zero-Trust mesh network, self-hosted se
 graph TD
     Client[Remote Workstation / Mobile] -->|Tailscale Encrypted Mesh| TS[Tailscale Interface]
     
-    subgraph Host OS - Production Stack (Docker)
+    subgraph "Host OS - Production Stack (Docker)"
         TS --> Proxy[Reverse Proxy - Nginx Proxy Manager]
         
         Proxy --> Vault[Vaultwarden - Passwords]
@@ -21,6 +21,6 @@ graph TD
         Proxy -->|Security Hardening| UFW[UFW Firewall / Fail2ban]
     end
 
-    subgraph Host OS - Isolated Sandbox (KVM / QEMU Virtual Machines)
+    subgraph "Host OS - Isolated Sandbox (KVM / QEMU)"
         Attacker[Pentest Workstation] -->|Isolated Internal Virtual Bridge| VulnVM[Vulnerable VMs / VulnHub / Metasploitable]
     end
